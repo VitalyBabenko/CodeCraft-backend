@@ -10,9 +10,8 @@ import {
   postCreateValidation,
 } from "./validations/index.js";
 
-const PORT = 4444;
-const DB_URL =
-  "mongodb+srv://user:user@metnblog.sratfnj.mongodb.net/blog?retryWrites=true&w=majority";
+const PORT = process.env.PORT || 4444;
+const DB_URL = process.env.MONGODB_URI;
 
 mongoose
   .connect(DB_URL)
@@ -81,3 +80,5 @@ app.listen(PORT, (err) => {
   if (err) return console.log(err);
   console.log(`Server work on ${PORT} port`);
 });
+
+export default app;
