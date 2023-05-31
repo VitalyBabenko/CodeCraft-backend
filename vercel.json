@@ -12,5 +12,13 @@
       "destination": "uploads/$1"
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.js" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.js" }],
+  "routes": [
+    { "handle": "filesystem" },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1",
+      "status": 200
+    }
+  ]
 }
