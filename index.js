@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import mongoose from "mongoose";
+import product from "./api/product.js";
 import cors from "cors";
 import { PostController, UserController } from "./controllers/index.js";
 import { checkAuth, handleValidationErrors } from "./utils/index.js";
@@ -30,6 +31,8 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+app.use("/api/product", product);
 
 app.use(express.json());
 app.use(cors());
