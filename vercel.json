@@ -6,19 +6,15 @@
       "use": "@vercel/node"
     }
   ],
-  "files": [
-    {
-      "source": "uploads/(.*)",
-      "destination": "uploads/$1"
-    }
-  ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.js" }],
   "routes": [
     { "handle": "filesystem" },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1",
-      "status": 200
+      "src": "/uploads/(.*)",
+      "dest": "/uploads/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.js"
     }
   ]
 }
