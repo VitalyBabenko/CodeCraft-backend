@@ -5,14 +5,14 @@ export class CommentService {
   static async getByPost(postId) {
     try {
       const comments = await CommentModel.find({ post: postId })
-        .populate("owner")
+        .populate("user")
         .exec();
       return comments;
     } catch (err) {
       console.log(err);
     }
   }
-  static async create(postId, ownerId, text) {
+  static async create(postId, userId, text) {
     try {
       const post = await PostModel.findById(postId);
       if (!post) {
@@ -21,12 +21,12 @@ export class CommentService {
 
       const comment = new CommentModel({
         post: postId,
-        owner: ownerId,
+        user: userId,
         text,
       });
 
       await comment.save();
-      return comment;
+      return comment.populate("user");
     } catch (error) {
       throw new Error("Failed to add comment");
     }

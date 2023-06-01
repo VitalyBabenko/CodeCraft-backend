@@ -14,7 +14,7 @@ export class CommentsController {
 
   static async create(req, res) {
     const postId = req.params.postId;
-    const ownerId = req.userId;
+    const userId = req.userId;
     const text = req.body.text;
 
     if (!text) {
@@ -22,7 +22,7 @@ export class CommentsController {
     }
 
     try {
-      const newComment = await CommentService.create(postId, ownerId, text);
+      const newComment = await CommentService.create(postId, userId, text);
       res.json(newComment);
     } catch (err) {
       console.log(err);
