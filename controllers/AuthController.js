@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import UserModel from "../models/User.js";
 
-export default class UserController {
+export class AuthController {
   static async register(req, res) {
     try {
       const password = req.body.password;

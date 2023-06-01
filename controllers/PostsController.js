@@ -1,9 +1,13 @@
 import PostModel from "../models/Post.js";
+import { PostsService } from "../services/PostsService.js";
 
-export default class PostController {
-  static async getAll(_, res) {
+export class PostsController {
+  static async getAll(req, res) {
+    const sortBy = req.query.sortBy;
+    const orderBy = req.query.orderBy === "asc" ? 1 : -1;
+
     try {
-      const posts = await PostModel.find().populate("user").exec();
+      const posts = await PostsService.getAll(sortBy, orderBy);
       res.json(posts);
     } catch (err) {
       res.status(400).json({
@@ -13,49 +17,44 @@ export default class PostController {
   }
 
   static async getOne(req, res) {
+    const postId = req.params.id;
     try {
-      const postId = req.params.id;
-
-      const post = await PostModel.findOneAndUpdate(
-        {
-          _id: postId,
-        },
-        {
-          $inc: { viewsCount: 1 },
-        },
-        {
-          returnDocument: "after",
-        }
-      ).populate("user");
-
-      if (!post) {
-        return res.status(400).json({
-          message: "Post not found",
-        });
-      }
-
+      const post = await PostsService.getOne(postId);
       res.json(post);
     } catch (err) {
       console.log(err);
       res.status(400).json({
-        message: "Failed to get post ",
+        message: "Failed to get post",
+      });
+    }
+  }
+
+  static async getPostsByTag(req, res) {
+    try {
+      const { tag } = req.params;
+      const { sortBy, orderBy } = req.query;
+
+      const posts = await PostsService.getPostsByTag(tag, sortBy, orderBy);
+
+      res.json(posts);
+    } catch (err) {
+      res.status(400).json({
+        message: "Failed to get posts",
       });
     }
   }
 
   static async create(req, res) {
     try {
-      const doc = new PostModel({
+      const newPost = {
         title: req.body.title,
         text: req.body.text,
         imageUrl: req.body.imageUrl,
         tags: req.body.tags.split(","),
         user: req.userId,
-      });
-
-      const post = await doc.save();
-
-      res.json(post);
+      };
+      const createdPost = await PostsService.create(newPost);
+      res.json(createdPost);
     } catch (err) {
       console.log(err);
       res.status(400).json({
@@ -65,20 +64,13 @@ export default class PostController {
   }
 
   static async remove(req, res) {
+    const postId = req.params.id;
     try {
-      const postId = req.params.id;
-
       const deletedPost = await PostModel.findOneAndDelete({
         _id: postId,
       });
 
-      if (!deletedPost) {
-        res.status(400).json({
-          message: "Failed to delete post",
-        });
-      }
-
-      res.json({ success: true });
+      res.json({ success: true, deletedPost });
     } catch (err) {
       res.status(400).json({
         message: "Failed to delete post",
@@ -89,25 +81,15 @@ export default class PostController {
   static async update(req, res) {
     try {
       const postId = req.params.id;
+      const post = {
+        title: req.body.title,
+        text: req.body.text,
+        imageUrl: req.body.imageUrl,
+        user: req.body.userId,
+        tags: req.body.tags.split(","),
+      };
 
-      const updatedPost = await PostModel.updateOne(
-        {
-          _id: postId,
-        },
-        {
-          title: req.body.title,
-          text: req.body.text,
-          imageUrl: req.body.imageUrl,
-          user: req.body.userId,
-          tags: req.body.tags.split(","),
-        }
-      );
-
-      if (!updatedPost) {
-        res.status(400).json({
-          message: "Failed to update post",
-        });
-      }
+      const updatedPost = await PostsService.update(postId, post);
 
       res.json(updatedPost);
     } catch (err) {

@@ -1,4 +1,4 @@
-import UserController from "./UserController.js";
-import PostController from "./PostController.js";
+import { PostsController } from "./PostsController.js";
+import { AuthController } from "./AuthController.js";
 
-export { UserController, PostController };
+export { AuthController, PostsController };
