@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { checkAuth } from "./utils/index.js";
 
-import { authRouter, postsRouter } from "./routes/index.js";
+import { authRouter, commentRouter, postsRouter } from "./routes/index.js";
 
 const PORT = process.env.PORT || 4444;
 const DB_URL =
@@ -22,6 +22,7 @@ app.use(cors());
 
 app.use("/auth", authRouter);
 app.use("/", postsRouter);
+app.use("/", commentRouter);
 
 const storage = multer.diskStorage({
   destination: (_, __, callBack) => {
